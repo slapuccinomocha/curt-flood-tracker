@@ -46,7 +46,7 @@ public class MapPage extends JFrame {
 	// Map Panel Elements
 	private JMapViewer map;
 	private Coordinate School;
-	private BufferedImage PinBuffered = ImageIO.read(new File("images/pin.png"));
+	private BufferedImage PinBuffered = ImageIO.read(getClass().getResource("/pin.png"));
 	private Image pinImg = PinBuffered.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 	public List<MapPin> mapPins = new ArrayList<MapPin>();
 
@@ -63,16 +63,16 @@ public class MapPage extends JFrame {
 	private String[] results = { "syd", "qld", "new york", "San francisco" };
 	//	private Coordinate searchCoord;
 
-	private String glasspathtoimage = "images/m-glass.png";
+	private String glasspathtoimage = "/m-glass.png";
 	private BufferedImage searchImageBuffered;
 	private ImageIcon searchImage;
 	private JButton searchLogo;
 
 	// Burger Menu
 	private JButton closeMenu;
-	private String closepathtoimage = "images/close_but.png";
+	private String closepathtoimage = "/close_but.png";
 	private JLabel profileIcon;
-	private String profilepathtoimage = "images/defProPic.png";
+	private String profilepathtoimage = "/defProPic.png";
 	JButton ProfileBut;
 	private JButton NearYouBut;
 	private JButton LocInfoBut;
@@ -80,7 +80,7 @@ public class MapPage extends JFrame {
 	private int menuPadding = 30;
 
 	// Burger Menu Button
-	private String burgerpathtoimage = "images/burger.png";
+	private String burgerpathtoimage = "/burger.png";
 	private BufferedImage burgerImageBuffered;
 	private ImageIcon BurgerImage;
 	private JButton BurgerLogo;
@@ -367,7 +367,7 @@ public class MapPage extends JFrame {
 		BurgerButton.setOpaque(false);
 		BurgerButton.setBounds(10, 10, 50, 50);
 
-		burgerImageBuffered = ImageIO.read(new File(burgerpathtoimage));
+		burgerImageBuffered = ImageIO.read(getClass().getResource(burgerpathtoimage));
 		Image burgerResized = burgerImageBuffered.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
 		BurgerImage = new ImageIcon(burgerResized);
 		BurgerLogo = new JButton(BurgerImage);
@@ -386,7 +386,7 @@ public class MapPage extends JFrame {
 		BurgerMenuFull.setVisible(false);
 		BurgerMenuFull.setBounds(0, 0, 200, 500);
 
-		BufferedImage closeImageBuffered = ImageIO.read(new File(closepathtoimage));
+		BufferedImage closeImageBuffered = ImageIO.read(getClass().getResource(closepathtoimage));
 		Image closeResized = closeImageBuffered.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
 		ImageIcon closeImage = new ImageIcon(closeResized);
 
@@ -400,7 +400,7 @@ public class MapPage extends JFrame {
 
 		BurgerMenuFull.add(closeMenu);
 
-		BufferedImage profileImageBuffered = ImageIO.read(new File(profilepathtoimage));
+		BufferedImage profileImageBuffered = ImageIO.read(getClass().getResource(profilepathtoimage));
 		Image profileResized = profileImageBuffered.getScaledInstance(70, 70, Image.SCALE_SMOOTH);
 		ImageIcon profileImage = new ImageIcon(profileResized);
 

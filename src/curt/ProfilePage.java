@@ -31,7 +31,7 @@ public class ProfilePage extends JFrame {
 	JButton back;
 
 	// Profile Pic
-	private String pathtopic = "images/defproPic.png";
+	private String pathtopic = "/defproPic.png";
 	private BufferedImage profileImageBuffered;
 	private ImageIcon profileImage;
 	private JLabel profileIcon;
@@ -143,7 +143,7 @@ public class ProfilePage extends JFrame {
 
 		NoOfReports = new JTextField("", 20);
 
-		profileImageBuffered = ImageIO.read(new File(pathtopic));
+		profileImageBuffered = ImageIO.read(getClass().getResource(pathtopic));
 		Image profileResized = profileImageBuffered.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 		profileImage = new ImageIcon(profileResized);
 		profileIcon = new JLabel(profileImage);

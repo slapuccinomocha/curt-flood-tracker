@@ -40,7 +40,7 @@ public class registerPage extends JFrame implements ActionListener {
 	private JPanel introPane;
 	private JButton Begin;
 
-	private String logopathtoimage = "images/curtLogo.png";
+	private String logopathtoimage = "/curtLogo.png";
 	private BufferedImage logoImageBuffered;
 	private ImageIcon logoImage;
 	private JLabel logoIcon;
@@ -265,7 +265,7 @@ public class registerPage extends JFrame implements ActionListener {
 		introPane.setBackground(Color.decode("#2c3e50"));
 		introPane.setName("INTRO");
 
-		logoImageBuffered = ImageIO.read(new File(logopathtoimage));
+		logoImageBuffered = ImageIO.read(getClass().getResource(logopathtoimage));
 		Image logoResized = logoImageBuffered.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
 		logoImage = new ImageIcon(logoResized);
 		logoIcon = new JLabel(logoImage);
