@@ -1,26 +1,18 @@
 package curt;
 
+// import necessary packages and external libraries
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-/* Workflow:
- * 1. GUI construction
- * 1a. design mockups
- * 1b. program interfaces
- * 1c. evaluate effectiveness of program interfaces and mockups
- * 2. Database construction
- * 2a. design example table
- * 2b. construct database
- * 2c. ensure database is fully useable
- * 3. GUI and Database connectivity
- * 3a. Connect labels to fields in database
- * */
 
+// this is the main class that runs, on startup
 public class floodTrackerMain extends JFrame {
 
+	// instantiate all objects of all other windows
 	private static final long serialVersionUID = 1L;
 
 	public static boolean loggedIn = false;
@@ -31,6 +23,7 @@ public class floodTrackerMain extends JFrame {
 	public static ProfilePage ProfileTab;
 	private static JLayeredPane parent;
 
+	// hold the currentUser logged in, in this
 	public static String currentUser;
 
 	// set up the register page before its needed.
@@ -196,9 +189,28 @@ public class floodTrackerMain extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				Boolean added = false;
+				
 				if (registerTab.getCurrentCard().getName() == "step3") {
+					
+					try {
+						added = registerTab.POSTmethod(registerTab.username, registerTab.password, registerTab.streetNo, registerTab.streetName, registerTab.suburb, registerTab.state);
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					} catch (NumberFormatException e1) {
+						e1.printStackTrace();
+					} catch (NoSuchAlgorithmException e1) {
+						e1.printStackTrace();
+					}
+					 if (added) {
 					registerPage.setVisible(false);
 					loginPage.setVisible(true);
+					 } else {
+						 return;
+					 }
 				}
 			}
 

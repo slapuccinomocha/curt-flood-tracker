@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -49,9 +51,9 @@ public class registerPage extends JFrame implements ActionListener {
 	private JPanel normalSignUp;
 
 	private JLabel usernameLab;
-	private JTextField username;
+	public JTextField username;
 	private JLabel passwordLab;
-	private JTextField password;
+	public JTextField password;
 
 	private JPanel googleSignUp;
 	private JButton googleSignIn;
@@ -63,12 +65,12 @@ public class registerPage extends JFrame implements ActionListener {
 
 	private JLabel step2Header;
 
-	private JTextField streetNo;
-	private JTextField streetName;
-	private JTextField suburb;
-	private JTextField state;
-	private JTextField country;
-	private JTextField postcode;
+	public JTextField streetNo;
+	public JTextField streetName;
+	public JTextField suburb;
+	public JTextField state;
+	public JTextField country;
+	public JTextField postcode;
 
 	// Elements of third panel of setup
 	private JPanel step3Pane;
@@ -90,9 +92,11 @@ public class registerPage extends JFrame implements ActionListener {
 	// print database table
 	public static void printSQLTable(String query) throws SQLException, ClassNotFoundException {
 
+		// connect to database
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(url, DBusername, DBpassword);
 
+		// prepare sql code to execute
 		Statement st = conn.createStatement();
 		ResultSet rs = st.executeQuery(query);
 		ResultSetMetaData rsmd = rs.getMetaData();
@@ -117,25 +121,31 @@ public class registerPage extends JFrame implements ActionListener {
 		conn.close();
 	}
 
+	// method to add user to database
 	public static void addUser(String name, String password, int streetNumber, String streetName, String Suburb,
-			String State) throws ClassNotFoundException, SQLException {
-
+			String State) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
+		
+		// connect to database
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		conn = DriverManager.getConnection(url, DBusername, DBpassword);
 
+		
 		String insertUser = "INSERT INTO users(username, password, NoOfReports, streetNumber, streetName, Suburb, State) VALUES (?, ?, 0, ?, ?, ?, ?);";
-		String checkUser = "SELECT username,password FROM users WHERE username=? AND password=? ;";
+		String checkUser = "SELECT username FROM users WHERE username=?;";
+		
+		
 		boolean userExists = false;
 		PreparedStatement insertStmt = conn.prepareStatement(insertUser);
 		PreparedStatement checkStatement = conn.prepareStatement(checkUser);
 
 		checkStatement.setString(1, name);
-		checkStatement.setString(2, password);
 
 		ResultSet queryResult = checkStatement.executeQuery();
 
-		if (queryResult.next() && !userExists) {
+		if (queryResult.next()) {
 			userExists = true;
+			JOptionPane.showMessageDialog(new JFrame(), "This username is taken :(");
+
 		} else {
 			userExists = false;
 		}
@@ -153,8 +163,6 @@ public class registerPage extends JFrame implements ActionListener {
 
 		}
 
-		printSQLTable(selectAll);
-
 		conn.close();
 
 	}
@@ -171,28 +179,48 @@ public class registerPage extends JFrame implements ActionListener {
 	}
 
 	// add user after all information has been enter
-
-	public void POSTmethod(JTextField name, JTextField password, JTextField streetNumber, JTextField streetName,
-			JTextField Suburb, JTextField State) throws ClassNotFoundException, SQLException {
-
+	public boolean POSTmethod(JTextField name, JTextField password, JTextField streetNumber, JTextField streetName,
+			JTextField Suburb, JTextField State) throws ClassNotFoundException, SQLException, NumberFormatException, NoSuchAlgorithmException {
+		boolean valid = true;
+		// check if all fields are filled out
 		if (name != null && password != null && streetNumber != null && streetName != null && Suburb != null
-				&& State != null) {
-			boolean valid = true;
+			&& State != null) {
+			
+			// ensure password has special symbols
 			if (password.getText().matches("[a-zA-Z. ]*")) {
 				JOptionPane.showMessageDialog(new JFrame(), "Your Password Does not contain any special symbols");
 				valid = false;
 			}
+			
+			// ensure password is more than 8 characters
 			if (password.getText().length() <= 8) {
 				JOptionPane.showMessageDialog(new JFrame(), "You're password needs to be at least 8 characters");
 				valid = false;
 			}
+			try {
+			     Integer.parseInt(streetNumber.getText());
+			     System.out.println("An integer");
+			}
+			catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(new JFrame(), "Enter a correct street number please :|");
+			}
+			// add user to database
 			if (valid) {
 				System.out.println(streetNumber.getText());
 				addUser(name.getText(), password.getText(), Integer.parseInt(streetNumber.getText()),
 						streetName.getText(), Suburb.getText(), State.getText());
+				printSQLTable("SELECT * FROM users");
+				return true;
 			}
 
+		// if they aren't then this message will show
+		} else {
+			valid = false;
+			JOptionPane.showMessageDialog(new JFrame(), "Please fill out all fields");
+			return false;
 		}
+		
+		return false;
 	}
 
 	// method to place all elements on the window
@@ -386,19 +414,8 @@ public class registerPage extends JFrame implements ActionListener {
 		    	try {
 					Desktop.getDesktop().browse(new URI("https://singh-aryan.gitbook.io/curt-hazard-tracker/licensing-and-terms/terms-and-conditions"));
 				} catch (IOException | URISyntaxException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-		    }
-		 
-		    @Override
-		    public void mouseEntered(MouseEvent e) {
-		        // the mouse has entered the label
-		    }
-		 
-		    @Override
-		    public void mouseExited(MouseEvent e) {
-		        // the mouse has exited the label
 		    }
 		});
 		TermsAgreement.setAlignmentX(JComponent.CENTER_ALIGNMENT);
@@ -472,16 +489,7 @@ public class registerPage extends JFrame implements ActionListener {
 
 		if (e.getActionCommand() == "NEXT") {
 			if (getCurrentCard().getName() == "step3") {
-				System.out.println("finish button");
-				try {
-					POSTmethod(username, password, streetNo, streetName, suburb, state);
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+
 			}
 			if (getCurrentCard().getName() == "step2") {
 				next.setText("finish!");

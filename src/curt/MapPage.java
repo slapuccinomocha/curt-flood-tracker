@@ -17,6 +17,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.TimerTask;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -60,7 +61,7 @@ public class MapPage extends JFrame {
 	// private JComboBox<Object> searchResults;
 	private JList<Object> searchResults;
 	private String[] results = { "syd", "qld", "new york", "San francisco" };
-//	private Coordinate searchCoord;
+	//	private Coordinate searchCoord;
 
 	private String glasspathtoimage = "images/m-glass.png";
 	private BufferedImage searchImageBuffered;
@@ -75,7 +76,7 @@ public class MapPage extends JFrame {
 	JButton ProfileBut;
 	private JButton NearYouBut;
 	private JButton LocInfoBut;
-	private JButton CurrListBut;
+	private JButton HelpButton;
 	private int menuPadding = 30;
 
 	// Burger Menu Button
@@ -126,6 +127,32 @@ public class MapPage extends JFrame {
 
 		conn.close();
 	}
+
+	public void beginPinRefresh() throws ClassNotFoundException, SQLException {
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		conn = DriverManager.getConnection(url, DBusername, DBpassword);
+		java.util.TimerTask task = new java.util.TimerTask() {
+			@Override
+			public void run() {
+				try {
+					getPins();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		java.util.Timer timer = new java.util.Timer(true);// true to run timer as daemon thread
+		timer.schedule(task, 0, 5000);// Run task every 5 second
+		try {
+			Thread.sleep(600000); // Cancel task after 1 minute.
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		timer.cancel();
+		
+		conn.close();
+	}
+	
 
 	// Retrieve info for information panel on specific pins
 	public void getInfoPanel(MapPin mapPin) throws SQLException, ClassNotFoundException {
@@ -179,6 +206,7 @@ public class MapPage extends JFrame {
 		double lat = map.getPosition(mouseX, mouseY).getLat();
 		double lon = map.getPosition(mouseX, mouseY).getLon();
 
+		// temporary pin before submission
 		MapPin currentPin = new MapPin(new Coordinate(lat, lon), pinImg, 1);
 		mapPins.add(currentPin);
 		map.addMapMarker(mapPins.get(mapPins.size() - 1));
@@ -214,9 +242,6 @@ public class MapPage extends JFrame {
 		MapPanel.setBounds(0, 0, 800, 500);
 
 		map = new JMapViewer() {
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 
 			public void setZoom(int zoom, Point mapPoint) {
@@ -230,6 +255,7 @@ public class MapPage extends JFrame {
 			}
 		};
 
+		// loading the map
 		TileSource mapSource = (TileSource) new BingAerialTileSource();
 		mapSource.getMaxZoom();
 
@@ -240,8 +266,8 @@ public class MapPage extends JFrame {
 		map.setZoomControlsVisible(false);
 		map.setMinimumSize(map.getSize());
 
+		// get pins upon login
 		getPins();
-		
 
 		MapPanel.add(map, BorderLayout.CENTER);
 
@@ -407,13 +433,13 @@ public class MapPage extends JFrame {
 
 		BurgerMenuFull.add(LocInfoBut);
 
-		CurrListBut = new JButton("Hazard List View");
-		CurrListBut.setBorderPainted(false);
-		CurrListBut.setContentAreaFilled(false);
-		CurrListBut.setBackground(null);
-		CurrListBut.setForeground(Color.gray);
+		HelpButton = new JButton("Help");
+		HelpButton.setBorderPainted(false);
+		HelpButton.setContentAreaFilled(false);
+		HelpButton.setBackground(null);
+		HelpButton.setForeground(Color.white);
 
-		BurgerMenuLayout.putConstraint(SpringLayout.NORTH, CurrListBut, menuPadding, SpringLayout.SOUTH, LocInfoBut);
+		BurgerMenuLayout.putConstraint(SpringLayout.NORTH, HelpButton, menuPadding, SpringLayout.SOUTH, LocInfoBut);
 
 		ProfileBut = new JButton("Your Profile");
 		ProfileBut.setBorderPainted(false);
@@ -421,11 +447,11 @@ public class MapPage extends JFrame {
 		ProfileBut.setBackground(null);
 		ProfileBut.setForeground(Color.WHITE);
 
-		BurgerMenuLayout.putConstraint(SpringLayout.NORTH, ProfileBut, 130, SpringLayout.SOUTH, CurrListBut);
+		BurgerMenuLayout.putConstraint(SpringLayout.NORTH, ProfileBut, 130, SpringLayout.SOUTH, HelpButton);
 
 		BurgerMenuFull.add(ProfileBut);
 
-		BurgerMenuFull.add(CurrListBut);
+		BurgerMenuFull.add(HelpButton);
 
 		// panel to dim map when viewing menu
 		Dimmer = new JPanel() {
@@ -570,6 +596,28 @@ public class MapPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				BurgerMenuFull.setVisible(true);
 				Dimmer.setVisible(true);
+				try {
+					getPins();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+
+		HelpButton.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URI("https://singh-aryan.gitbook.io/curt-hazard-tracker/usage"));
+				} catch (IOException | URISyntaxException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 	}
