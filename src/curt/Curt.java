@@ -2,15 +2,26 @@ package curt;
 
 // import necessary packages and external libraries
 import javax.swing.*;
+
+import com.apple.eawt.Application;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 
 // this is the main class that runs, on startup
-public class floodTrackerMain extends JFrame {
+public class Curt extends JFrame {
+	
+	private static String logopathtoimage = "/curtLogoRed.png";
+	static ImageIcon ICON = new ImageIcon(Curt.class.getResource(logopathtoimage));
+
+
 
 	// instantiate all objects of all other windows
 	private static final long serialVersionUID = 1L;
@@ -27,10 +38,11 @@ public class floodTrackerMain extends JFrame {
 	public static String currentUser;
 
 	// set up the register page before its needed.
-	public static void iterateRegister(floodTrackerMain frame, Container register, Container login) {
+	public static void iterateRegister(Curt frame, Container register, Container login) {
 		frame.setPreferredSize(new Dimension(600, 375));
 		frame.setSize(new Dimension(600, 375));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
 		frame.add(register);
 		frame.add(login);
@@ -44,11 +56,27 @@ public class floodTrackerMain extends JFrame {
 
 	public static void main(String args[])
 			throws IOException, ClassNotFoundException, SQLException, FontFormatException {
-
-		final floodTrackerMain mainApp = new floodTrackerMain();
+		// check if internet is connected
+		try {
+	         URL url = new URL("http://www.google.com");
+	         URLConnection connection = url.openConnection();
+	         connection.connect();
+	         System.out.println("Internet is connected");
+	      } catch (MalformedURLException e) {
+	         System.out.println("Internet is not connected");
+	      } catch (IOException e) {
+	         System.out.println("Internet is not connected");
+	      }
+		
+		final Curt mainApp = new Curt();
 		mainApp.setResizable(false);
-		final floodTrackerMain registerApp = new floodTrackerMain();
+		mainApp.setIconImage(ICON.getImage());
+        Application.getApplication().setDockIconImage(ICON.getImage());
+        
+		final Curt registerApp = new Curt();
 		registerApp.setResizable(false);
+		registerApp.setIconImage(ICON.getImage());
+        Application.getApplication().setDockIconImage(ICON.getImage());
 
 		mainApp.setPreferredSize(new Dimension(800, 500));
 		mainApp.setLayout(new BorderLayout());
@@ -60,7 +88,7 @@ public class floodTrackerMain extends JFrame {
 		parent.setBackground(Color.decode("#2c3e50"));
 		parent.setOpaque(true);
 
-		// initialise map/profile screens
+		// Initialize map/profile screens
 
 		mainApp.setVisible(false);
 		mainApp.setSize(800, 500);

@@ -213,19 +213,24 @@ public class MapPage extends JFrame {
 		MapPanel.setLayout(new BorderLayout());
 		MapPanel.setBounds(0, 0, 800, 500);
 
-		map = new JMapViewer() {
-			private static final long serialVersionUID = 1L;
+		try {
+			map = new JMapViewer() {
+				private static final long serialVersionUID = 1L;
 
-			public void setZoom(int zoom, Point mapPoint) {
-				if (zoom > tileController.getTileSource().getMaxZoom() || zoom < 5 || zoom == this.zoom)
-					return;
-				ICoordinate zoomPos = getPosition(mapPoint);
-				tileController.cancelOutstandingJobs();
-				// Clearing outstanding load requests
-				setDisplayPosition(mapPoint, zoomPos, zoom);
+				public void setZoom(int zoom, Point mapPoint) {
+					if (zoom > tileController.getTileSource().getMaxZoom() || zoom < 5 || zoom == this.zoom)
+						return;
+					ICoordinate zoomPos = getPosition(mapPoint);
+					tileController.cancelOutstandingJobs();
+					// Clearing outstanding load requests
+					setDisplayPosition(mapPoint, zoomPos, zoom);
 
-			}
-		};
+				}
+			};
+			
+		} catch (Exception ie){
+			System.out.println("error");
+		}
 
 		// loading the map
 		TileSource mapSource = (TileSource) new BingAerialTileSource();
