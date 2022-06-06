@@ -46,7 +46,9 @@ public class floodTrackerMain extends JFrame {
 			throws IOException, ClassNotFoundException, SQLException, FontFormatException {
 
 		final floodTrackerMain mainApp = new floodTrackerMain();
+		mainApp.setResizable(false);
 		final floodTrackerMain registerApp = new floodTrackerMain();
+		registerApp.setResizable(false);
 
 		mainApp.setPreferredSize(new Dimension(800, 500));
 		mainApp.setLayout(new BorderLayout());
@@ -229,6 +231,7 @@ public class floodTrackerMain extends JFrame {
 							MapTab.inputPanel.severitySlider.getValue(), currentUser,
 							MapTab.inputPanel.InfoDesc.getText());
 
+					MapTab.inputPanel.setVisible(false);
 					MapTab.getPins();
 				} catch (ClassNotFoundException | SQLException e1) {
 					// TODO Auto-generated catch block

@@ -113,7 +113,7 @@ public class MapPage extends JFrame {
 		int id;
 		MapPin marker;
 
-		// Place pins at all coordiantes
+		// Place pins at all coordinates
 		while (PinInfo.next()) {
 			id = PinInfo.getInt(1);
 			lat = PinInfo.getDouble(2);
@@ -124,31 +124,6 @@ public class MapPage extends JFrame {
 
 		}
 
-		conn.close();
-	}
-
-	public void beginPinRefresh() throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.cj.jdbc.Driver");
-		conn = DriverManager.getConnection(url, DBusername, DBpassword);
-		java.util.TimerTask task = new java.util.TimerTask() {
-			@Override
-			public void run() {
-				try {
-					getPins();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		java.util.Timer timer = new java.util.Timer(true);// true to run timer as daemon thread
-		timer.schedule(task, 0, 5000);// Run task every 5 second
-		try {
-			Thread.sleep(600000); // Cancel task after 1 minute.
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		timer.cancel();
-		
 		conn.close();
 	}
 	
@@ -209,7 +184,6 @@ public class MapPage extends JFrame {
 		MapPin currentPin = new MapPin(new Coordinate(lat, lon), pinImg, 1);
 		mapPins.add(currentPin);
 		map.addMapMarker(mapPins.get(mapPins.size() - 1));
-		map.setDisplayPosition(new Coordinate(lat, lon), 15);
 
 	}
 
@@ -259,7 +233,7 @@ public class MapPage extends JFrame {
 
 		map.setTileSource(mapSource);
 		School = new Coordinate(-33.70417, 150.89794);
-		map.setDisplayPosition(School, 21);
+		map.setDisplayPosition(School, 17);
 		map.setVisible(true);
 		map.setZoomControlsVisible(false);
 		map.setMinimumSize(map.getSize());
@@ -547,7 +521,6 @@ public class MapPage extends JFrame {
 					List<MapMarker> ar = map.getMapMarkerList();
 					Iterator<MapMarker> i = ar.iterator();
 					while (i.hasNext()) {
-						System.out.println("fired");
 						MapPin mapMarker = (MapPin) i.next();
 						Point MarkerPosition = map.getMapPosition(mapMarker.getLat(), mapMarker.getLon());
 
@@ -573,9 +546,8 @@ public class MapPage extends JFrame {
 					}
 				} else if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
 					try {
-						if (!inputPanel.isShowing()) {
+							if (!inputPanel.isShowing()) {
 							addPin(e);
-							System.out.println("pressed");
 
 							inputPanel.setVisible(true);
 
@@ -599,10 +571,8 @@ public class MapPage extends JFrame {
 				try {
 					getPins();
 				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -614,7 +584,7 @@ public class MapPage extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					Desktop.getDesktop().browse(new URI("https://singh-aryan.gitbook.io/curt-hazard-tracker/usage"));
+					Desktop.getDesktop().browse(new URI("https://singh-aryan.gitbook.io/curt-hazard-tracker/user-documentation/usage"));
 				} catch (IOException | URISyntaxException e1) {
 					e1.printStackTrace();
 				}

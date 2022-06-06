@@ -16,7 +16,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -88,8 +87,8 @@ public class registerPage extends JFrame implements ActionListener {
 	static String DBusername = "Admin";
 	static String DBpassword = "jewfit-wezfAx-1tiwhe";
 
-	// print database table
-	public static void printSQLTable(String query) throws SQLException, ClassNotFoundException {
+	// execute an sql statement
+	public static void doSQL(String query) throws SQLException, ClassNotFoundException {
 
 		// connect to database
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -97,25 +96,7 @@ public class registerPage extends JFrame implements ActionListener {
 
 		// prepare sql code to execute
 		Statement st = conn.createStatement();
-		ResultSet rs = st.executeQuery(query);
-		ResultSetMetaData rsmd = rs.getMetaData();
-
-		int colCount = rsmd.getColumnCount();
-
-		// Print one row
-		for (int i = 1; i <= colCount; i++) {
-			System.out.print(rsmd.getColumnName(i) + " | ");
-		}
-
-		while (rs.next()) {
-			System.out.println("");
-			for (int i = 1; i <= colCount; i++) {
-				// Print one element of a row
-				System.out.print(rs.getString(i) + " | ");
-			}
-			// Move to the next line to print the next row.
-			System.out.println();
-		}
+		st.execute(query);
 
 		conn.close();
 	}
@@ -208,7 +189,6 @@ public class registerPage extends JFrame implements ActionListener {
 				System.out.println(streetNumber.getText());
 				addUser(name.getText(), password.getText(), Integer.parseInt(streetNumber.getText()),
 						streetName.getText(), Suburb.getText(), State.getText());
-				printSQLTable("SELECT * FROM users");
 				return true;
 			}
 

@@ -79,6 +79,27 @@ public class InfoPanel extends JPanel {
 	// hazard to the database
 	public void publishHazard(String name, String type, double lat, double lon, int severity, String username,
 			String description) throws ClassNotFoundException, SQLException {
+		boolean valid = true;
+		
+		char[] ch = name.toCharArray();
+		for(char c : ch) {
+			if(Character.isDigit(c)) {
+				valid = false;
+			}
+		}
+		
+		ch = type.toCharArray();
+		for(char c : ch) {
+			if(Character.isDigit(c)) {
+				valid = false;
+			}
+		}
+		
+		if (valid == false) {
+			JOptionPane.showMessageDialog(new JFrame(), "Names and types must not contain numbers, please.");
+			return;
+		}
+		
 		Connection conn;
 
 		BigDecimal Lat = new BigDecimal(lat);
@@ -112,6 +133,7 @@ public class InfoPanel extends JPanel {
 
 		updateStmt.setString(1, username);
 
+		updateStmt.executeUpdate();
 		insertStmt.executeUpdate();
 
 		conn.close();
