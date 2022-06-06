@@ -15,7 +15,6 @@ import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -72,7 +71,7 @@ public class MapPage extends JFrame {
 	private JButton closeMenu;
 	private String closepathtoimage = "/close_but.png";
 	private JLabel profileIcon;
-	private String profilepathtoimage = "/defProPic.png";
+	private String profilepathtoimage = "/defproPic.png";
 	JButton ProfileBut;
 	private JButton NearYouBut;
 	private JButton LocInfoBut;
@@ -218,7 +217,6 @@ public class MapPage extends JFrame {
 	public void removePin() throws IOException, FontFormatException {
 		map.removeMapMarker(mapPins.get(mapPins.size() - 1));
 		mapPins.remove((mapPins.size() - 1));
-		System.out.println(mapPins);
 	}
 
 	// constructor being called to setUp UI as soon as an object is made.
@@ -350,7 +348,7 @@ public class MapPage extends JFrame {
 		SearchTextEntry.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 		SearchTextEntry.setFont(new Font("Avenir", Font.PLAIN, 15));
 
-		searchImageBuffered = ImageIO.read(new File(glasspathtoimage));
+		searchImageBuffered = ImageIO.read(getClass().getResource(glasspathtoimage));
 		Image searchResized = searchImageBuffered.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
 		searchImage = new ImageIcon(searchResized);
 		searchLogo = new JButton(searchImage);
@@ -541,13 +539,15 @@ public class MapPage extends JFrame {
 					inputPanel.setVisible(false);
 					infoPanel.setVisible(false);
 
+					
+					// check if map pin has been clicked
 					Point p = e.getPoint();
 					int X = p.x + 3;
 					int Y = p.y + 3;
 					List<MapMarker> ar = map.getMapMarkerList();
 					Iterator<MapMarker> i = ar.iterator();
 					while (i.hasNext()) {
-
+						System.out.println("fired");
 						MapPin mapMarker = (MapPin) i.next();
 						Point MarkerPosition = map.getMapPosition(mapMarker.getLat(), mapMarker.getLon());
 
@@ -557,8 +557,7 @@ public class MapPage extends JFrame {
 							int centerY = MarkerPosition.y;
 
 							// calculate the radius from the touch to the center of the dot
-							double radCircle = Math
-									.sqrt((((centerX - X) * (centerX - X)) + (centerY - Y) * (centerY - Y)));
+							double radCircle = Math.sqrt((((centerX - X) * (centerX - X)) + (centerY - Y) * (centerY - Y)));
 
 							// if the radius is smaller then 23 (radius of a ball is 5), then it must be on
 							// the dot
@@ -573,10 +572,11 @@ public class MapPage extends JFrame {
 						}
 					}
 				} else if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-
 					try {
 						if (!inputPanel.isShowing()) {
 							addPin(e);
+							System.out.println("pressed");
+
 							inputPanel.setVisible(true);
 
 						} else {

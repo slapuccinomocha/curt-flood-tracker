@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -121,9 +120,9 @@ public class InfoPanel extends JPanel {
 	public InfoPanel(String username) throws FontFormatException, IOException {
 
 		// fonts
-		Font quicksand = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/quicksand/Quicksand_book.otf"));
-		Font walkway = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/walkway/Walkway_Bold.ttf"));
-		Font antipasto = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/antipasto/Antipasto-Regular.ttf"));
+		Font quicksand = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("Quicksand_Book.otf"));
+		Font walkway = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("Walkway_Bold.ttf"));
+		Font antipasto = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("Antipasto-Regular.ttf"));
 
 		SpringLayout InfoLayout = new SpringLayout();
 
